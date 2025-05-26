@@ -1,0 +1,2 @@
+-- CreateEnum
+CREATE TYPE "Category" AS ENUM ('HISTORY', 'SCIENCE', 'ART', 'LITERATURE');

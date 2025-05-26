@@ -1,0 +1,17 @@
+h1 {
+    font-family: 'Vazir', sans-serif;
+  }
+
+html {
+    scroll-behavior: smooth;
+  }
+  
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  
