@@ -1,67 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-
-// Navbar with mobile support
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <nav className="bg-black text-white px-6 py-4 shadow-md">
-      <div className="flex justify-between items-center max-w-7xl mx-auto">
-        <Link href="/" className="text-xl font-bold">MyBookStore</Link>
-
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex space-x-6 text-sm">
-          <li><Link href="/" className="hover:underline">Home</Link></li>
-          <li><Link href="/books" className="hover:underline font-semibold">Books</Link></li>
-          <li><Link href="/about" className="hover:underline">About</Link></li>
-          <li><Link href="/contact" className="hover:underline">Contact</Link></li>
-        </ul>
-
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden focus:outline-none"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2"
-            viewBox="0 0 24 24">
-            {isOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden mt-2 space-y-2 px-6 text-sm">
-          <Link href="/" className="block hover:underline">Home</Link>
-          <Link href="/books" className="block hover:underline font-semibold">Books</Link>
-          <Link href="/about" className="block hover:underline">About</Link>
-          <Link href="/contact" className="block hover:underline">Contact</Link>
-        </div>
-      )}
-    </nav>
-  );
-};
+import Navbar from "@/components/Navbar";
+import { useRouter } from "next/navigation";
 
 const BookCategoryFilter = () => {
   const [books, setBooks] = useState([]);
   const [category, setCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [cart, setCart] = useState([]);
+  const [quantities, setQuantities] = useState({});
+  const router = useRouter();
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         const params = new URLSearchParams();
-if (searchQuery) params.append("searchQuery", searchQuery); // ✅ CORRECT
-if (category) params.append("category", category);
-
+        if (searchQuery) params.append("searchQuery", searchQuery);
+        if (category) params.append("category", category);
 
         const res = await fetch(`/api/books?${params.toString()}`);
         const data = await res.json();
@@ -74,12 +29,29 @@ if (category) params.append("category", category);
     fetchBooks();
   }, [category, searchQuery]);
 
-  const addToCart = (book) => {
-    setCart((prevCart) => [...prevCart, book]);
+  const handleAddToBag = (book) => {
+    const quantity = quantities[book.id] || 1;
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    const existingIndex = cart.findIndex((item) => item.id === book.id);
+
+    if (existingIndex !== -1) {
+      cart[existingIndex].quantity += quantity;
+      if (cart[existingIndex].quantity > 10) {
+        cart[existingIndex].quantity = 10;
+      }
+    } else {
+      cart.push({ ...book, quantity });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert(`${book.title} (x${quantity}) added to bag.`);
+    router.refresh(); // refresh for reactivity
   };
 
-  const removeFromCart = (bookId) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== bookId));
+  const handleQuantityChange = (bookId, value) => {
+    const val = Math.max(1, Math.min(10, parseInt(value) || 1));
+    setQuantities({ ...quantities, [bookId]: val });
   };
 
   return (
@@ -116,31 +88,6 @@ if (category) params.append("category", category);
         />
       </div>
 
-      {/* Cart Section */}
-      <div className="mb-10 p-4 bg-gray-100 rounded-lg">
-        <h2 className="text-xl font-semibold mb-2">Cart</h2>
-        {cart.length === 0 ? (
-          <p className="text-gray-600">No items in cart.</p>
-        ) : (
-          <ul className="space-y-2">
-            {cart.map((item) => (
-              <li
-                key={item.id}
-                className="flex justify-between items-center border-b pb-1"
-              >
-                <span className="text-sm">{item.title}</span>
-                <button
-                  onClick={() => removeFromCart(item.id)}
-                  className="text-red-500 hover:underline text-xs"
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
       {/* Book Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 md:px-8 lg:px-20">
         {books.length > 0 ? (
@@ -161,12 +108,24 @@ if (category) params.append("category", category);
                   />
                 )}
               </div>
-              <button
-                onClick={() => addToCart(book)}
-                className="mt-3 bg-black text-white px-3 py-1 rounded text-xs hover:bg-gray-800 transition"
-              >
-                Add to Bag
-              </button>
+
+              {/* Quantity + Add to Bag */}
+              <div className="mt-4 flex items-center justify-between gap-2">
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={quantities[book.id] || 1}
+                  onChange={(e) => handleQuantityChange(book.id, e.target.value)}
+                  className="w-16 border rounded p-1"
+                />
+                <button
+                  onClick={() => handleAddToBag(book)}
+                  className="bg-black text-white px-4 py-2 rounded text-sm"
+                >
+                  Add to Bag
+                </button>
+              </div>
             </div>
           ))
         ) : (
@@ -181,11 +140,11 @@ if (category) params.append("category", category);
 
 export default function BooksPage() {
   return (
-    <div>
+    <>
       <Navbar />
-      <div className="container mx-auto p-4">
+      <main className="pt-32 container mx-auto p-4">
         <BookCategoryFilter />
-      </div>
-    </div>
+      </main>
+    </>
   );
 }

@@ -3,9 +3,7 @@
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import BookPreviewSection from "@/components/BookPreviewSection";
-
-
-
+import Link from 'next/link';
 
 // Generate hover images dynamically
 const hoverImages = Array.from({ length: 100 }, (_, index) => `/hover${index + 1}.png`);
@@ -29,6 +27,10 @@ export default function Home() {
   const [scrollPosition, setScrollPosition] = useState(0); // To track scroll position
   const [showHoverImages, setShowHoverImages] = useState(true); // To toggle hover images visibility
   const [showTitle, setShowTitle] = useState(false); // Track title visibility
+  const [cartItems, setCartItems] = useState([]);
+  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+
 
   const scrollRef = useRef(null);
 
@@ -126,18 +128,8 @@ useEffect(() => {
 
   return (
     <main className="flex flex-col min-h-screen bg-gray-100">
-      {/* Navbar */}
-      <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white shadow-md" : "bg-transparent"}`}>
-        <div className="flex justify-between items-center p-6 max-w-7xl mx-auto">
-          <div className="text-2xl font-bold text-gray-800">FAR</div>
-          <ul className="flex space-x-6 text-gray-700">
-            <li className="hover:text-black cursor-pointer transition">Home</li>
-            <li className="hover:text-black cursor-pointer transition">Shop</li>
-            <li className="hover:text-black cursor-pointer transition">About</li>
-            <li className="hover:text-black cursor-pointer transition">Contact</li>
-          </ul>
-        </div>
-      </nav>
+
+
 
       {/* Hero Section */}
       <section
@@ -236,60 +228,6 @@ useEffect(() => {
       
       {/* Let's Shop Title */}
       <BookPreviewSection />
-
-{/* Footer */}
-<footer className="bg-white border-t mt-16">
-  <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-10 text-gray-700 text-sm">
-    
-    {/* Column 1: Branding */}
-    <div>
-      <h3 className="text-xl font-bold text-gray-900 mb-2">FAR</h3>
-      <p>Authentic Iranian Art, Reimagined for You.</p>
-    </div>
-
-    {/* Column 2: Navigation */}
-    <div>
-      <h4 className="font-semibold text-gray-900 mb-2">Navigation</h4>
-      <ul className="space-y-2">
-        <li><a href="#" className="hover:underline">Home</a></li>
-        <li><a href="#" className="hover:underline">Shop</a></li>
-        <li><a href="#" className="hover:underline">About</a></li>
-        <li><a href="#" className="hover:underline">Contact</a></li>
-      </ul>
-    </div>
-
-    {/* Column 3: Contact Info */}
-    <div>
-      <h4 className="font-semibold text-gray-900 mb-2">Contact</h4>
-      <p>Tehran, Iran</p>
-      <p>Phone: +98 912 123 4567</p>
-      <p>Email: support@far.ir</p>
-    </div>
-
-    {/* Column 4: Socials */}
-    <div>
-      <h4 className="font-semibold text-gray-900 mb-2">Follow Us</h4>
-      <div className="flex space-x-4 mt-2">
-        <a href="#" aria-label="Instagram" className="hover:text-black">
-          <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-            <path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.5.2.9.5 1.3.9.4.4.7.8.9 1.3.2.4.3 1 .4 2.2.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.5-.5.9-.9 1.3-.4.4-.8.7-1.3.9-.4.2-1 .3-2.2.4-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.5-.2-.9-.5-1.3-.9-.4-.4-.7-.8-.9-1.3-.2-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.5.5-.9.9-1.3.4-.4.8-.7 1.3-.9.4-.2 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2m0-2.2C8.7 0 8.3 0 7 .1 5.6.2 4.6.4 3.8.7 2.9 1 2.1 1.5 1.3 2.3.5 3.1 0 3.9-.3 4.8c-.3.8-.5 1.8-.6 3.2C-.1 8.3 0 8.7 0 12s0 3.7.1 4.9c.1 1.4.3 2.4.6 3.2.3.8.8 1.6 1.6 2.4.8.8 1.6 1.3 2.4 1.6.8.3 1.8.5 3.2.6 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c1.4-.1 2.4-.3 3.2-.6.8-.3 1.6-.8 2.4-1.6.8-.8 1.3-1.6 1.6-2.4.3-.8.5-1.8.6-3.2.1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.1-1.4-.3-2.4-.6-3.2-.3-.8-.8-1.6-1.6-2.4-.8-.8-1.6-1.3-2.4-1.6-.8-.3-1.8-.5-3.2-.6C15.7 0 15.3 0 12 0z"/>
-            <path d="M12 5.8c-3.4 0-6.2 2.8-6.2 6.2s2.8 6.2 6.2 6.2 6.2-2.8 6.2-6.2-2.8-6.2-6.2-6.2zm0 10.2c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4zM18.4 4.6c-.8 0-1.4.6-1.4 1.4 0 .8.6 1.4 1.4 1.4.8 0 1.4-.6 1.4-1.4 0-.8-.6-1.4-1.4-1.4z"/>
-          </svg>
-        </a>
-        <a href="#" aria-label="Facebook" className="hover:text-black">
-          <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-            <path d="M22.676 0H1.326C.593 0 0 .593 0 1.326v21.348C0 23.406.593 24 1.326 24H12.82V14.708h-3.125v-3.622h3.125V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.464.099 2.797.143v3.24l-1.92.001c-1.504 0-1.796.715-1.796 1.763v2.312h3.587l-.467 3.622h-3.12V24h6.116C23.407 24 24 23.407 24 22.674V1.326C24 .593 23.407 0 22.676 0"/>
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div className="border-t mt-6 py-4 text-center text-xs text-gray-500">
-    &copy; {new Date().getFullYear()} FAR. All rights reserved.
-  </div>
-</footer>
-
 
     </main>
   );

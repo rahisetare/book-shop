@@ -28,4 +28,21 @@ model Book {
   price     Float
   category  Category // Use the enum for category
 }
+model User {
+  id       String   @id @default(cuid())
+  email    String   @unique
+  password String
+  name     String?
+  createdAt DateTime @default(now())
+}
+model CartItem {
+  id        Int    @id @default(autoincrement())
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+  book      Book   @relation(fields: [bookId], references: [id])
+  bookId    Int
+  quantity  Int    @default(1)
+
+  @@unique([userId, bookId]) // Prevents duplicate book entries for the same user
+}
 

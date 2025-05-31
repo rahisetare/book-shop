@@ -1,6 +1,21 @@
 // pages/books.js
 import React from 'react';
 import BookCard from '../../components/BookCard';
+// pages/anypage.js
+import Navbar from "@/components/Navbar";
+
+export default function book() {
+  return (
+    <>
+      <Navbar />
+      <div className="pt-24"> {/* padding-top to avoid overlap */}
+        <h1 className="text-4xl font-bold">This is another page</h1>
+        {/* Page content here */}
+      </div>
+    </>
+  );
+}
+
 
 const books = [
   {
