@@ -229,6 +229,70 @@ useEffect(() => {
       {/* Let's Shop Title */}
       <BookPreviewSection />
 
+      <section className="py-20 px-6 bg-white">
+  <h2 className="text-4xl font-bold text-center mb-12">Explore Our Categories</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+    {[
+      { title: "Books", image: "/books-category.jpg", href: "/books" },
+      { title: "Carpets", image: "/carpets-category.jpg", href: "/carpets" },
+      { title: "Clothing", image: "/clothes-category.jpg", href: "/clothes" },
+    ].map((cat, i) => (
+      <Link key={i} href={cat.href}>
+        <div className="group relative overflow-hidden rounded-2xl shadow-md cursor-pointer hover:scale-105 transition-transform duration-300">
+          <img src={cat.image} alt={cat.title} className="w-full h-64 object-cover" />
+          <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="text-white text-2xl font-semibold">{cat.title}</span>
+          </div>
+        </div>
+      </Link>
+    ))}
+  </div>
+</section>
+
+<section className="py-20 px-6 bg-gray-50 text-center">
+  <div className="max-w-4xl mx-auto">
+    <h2 className="text-4xl font-bold mb-6">About FAR</h2>
+    <p className="text-lg leading-relaxed text-gray-700">
+      FAR is a celebration of Persian art and heritage. From handwoven carpets and timeless literature to elegant clothing,
+      our curated collection bridges ancient traditions with modern design. Our mission is to bring the soul of Iran to the world.
+    </p>
+  </div>
+</section>
+<section className="py-20 px-6 bg-white">
+  <h2 className="text-4xl font-bold text-center mb-12">What Our Customers Say</h2>
+  <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8">
+    {[
+      {
+        name: "Layla K.",
+        text: "The carpet I ordered from FAR is breathtaking. It adds a sense of warmth and culture to my home.",
+      },
+      {
+        name: "Amir H.",
+        text: "Incredible book selection. I finally found rare Persian literature in high quality prints!",
+      },
+      {
+        name: "Sofia M.",
+        text: "I love the attention to detail in the clothing. Elegant, authentic, and comfortable.",
+      },
+    ].map((review, i) => (
+      <div key={i} className="bg-gray-100 p-6 rounded-xl shadow-sm">
+        <p className="text-gray-700 italic">“{review.text}”</p>
+        <div className="mt-4 font-semibold text-right">— {review.name}</div>
+      </div>
+    ))}
+  </div>
+</section>
+<section className="py-20 px-6 bg-gradient-to-r from-yellow-100 to-yellow-300 text-center">
+  <h2 className="text-4xl font-bold mb-4">Start Your Journey into Persian Art</h2>
+  <p className="mb-6 text-lg text-gray-800">Discover handcrafted pieces that tell a story. Every item is a bridge to Iran's rich culture.</p>
+  <Link href="/books">
+    <button className="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition duration-300">
+      Shop Now
+    </button>
+  </Link>
+</section>
+
+
     </main>
   );
 }
