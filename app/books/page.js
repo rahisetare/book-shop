@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const BookCategoryFilter = () => {
   const [books, setBooks] = useState([]);
@@ -10,13 +10,25 @@ const BookCategoryFilter = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [quantities, setQuantities] = useState({});
   const router = useRouter();
+  const searchParams = useSearchParams();
 
+  // ✅ اعمال category از URL هنگام بارگذاری اولیه
+  useEffect(() => {
+  const categoryFromURL = searchParams.get("category");
+  if (categoryFromURL) {
+    setCategory(categoryFromURL.toUpperCase());
+  } else {
+    setCategory("All");
+  }
+}, [searchParams]);
+
+  // ✅ گرفتن داده‌ها با توجه به فیلترها
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         const params = new URLSearchParams();
         if (searchQuery) params.append("searchQuery", searchQuery);
-        if (category) params.append("category", category);
+        if (category && category !== "All") params.append("category", category);
 
         const res = await fetch(`/api/books?${params.toString()}`);
         const data = await res.json();
@@ -54,6 +66,16 @@ const BookCategoryFilter = () => {
     setQuantities({ ...quantities, [bookId]: val });
   };
 
+  const handleCategoryChange = (e) => {
+    const newCategory = e.target.value;
+    setCategory(newCategory);
+    if (newCategory === "All") {
+      router.push("/books");
+    } else {
+      router.push(`/books?category=${newCategory.toLowerCase()}`);
+    }
+  };
+
   return (
     <div>
       <h1 className="text-3xl font-bold text-center mb-6">Books</h1>
@@ -66,7 +88,7 @@ const BookCategoryFilter = () => {
         <select
           id="category"
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          onChange={handleCategoryChange}
           className="border p-2 rounded"
         >
           <option value="All">All</option>
